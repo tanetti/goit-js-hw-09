@@ -14,8 +14,8 @@ Notify.init({
   },
 });
 
-const createPromise = (position, delay) => {
-  return new Promise((resolve, reject) => {
+const createPromise = (position, delay) =>
+  new Promise((resolve, reject) => {
     const shouldResolve = Math.random() > 0.3;
 
     setTimeout(() => {
@@ -26,7 +26,6 @@ const createPromise = (position, delay) => {
       }
     }, delay);
   });
-};
 
 const createPromisesQueue = ({ delay, step, amount }) => {
   let iterationDelay = delay;
@@ -47,10 +46,10 @@ const createPromisesQueue = ({ delay, step, amount }) => {
   }
 };
 
-const collectFormData = form => ({
-  delay: Number(form.delay.value),
-  step: Number(form.step.value),
-  amount: Number(form.amount.value),
+const collectFormData = ({ delay, step, amount }) => ({
+  delay: Number(delay.value),
+  step: Number(step.value),
+  amount: Number(amount.value),
 });
 
 const toggleSubmitButtonState = () => {
@@ -59,7 +58,7 @@ const toggleSubmitButtonState = () => {
 
 const onFormSubmit = event => {
   event.preventDefault();
-  createPromisesQueue(collectFormData(event.currentTarget));
+  createPromisesQueue(collectFormData(event.currentTarget.elements));
   toggleSubmitButtonState();
 };
 
