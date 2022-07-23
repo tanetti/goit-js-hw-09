@@ -15,7 +15,11 @@ const getRandomHexColor = () =>
 const changeBodyBackgroundColor = () => (document.body.style.backgroundColor = getRandomHexColor());
 
 const switchIntervalState = isActive => {
-  if (isActive === true) intervalBodyBackgroundColorChange = setInterval(changeBodyBackgroundColor, 1000);
+  if (isActive === true) {
+    changeBodyBackgroundColor();
+    intervalBodyBackgroundColorChange = setInterval(changeBodyBackgroundColor, 1000);
+    return;
+  }
   if (isActive === false) clearInterval(intervalBodyBackgroundColorChange);
 };
 
