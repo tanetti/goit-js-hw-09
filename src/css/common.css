@@ -45,3 +45,74 @@ img {
 .buttons-wrapper button:not(:last-child) {
   margin-right: 30px;
 }
+
+.controls-container {
+  display: flex;
+  justify-content: center;
+}
+
+.controls-container input {
+  width: 220px;
+  height: 40px;
+  margin-right: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+
+  font-size: 20px;
+  text-align: center;
+}
+
+.controls-container button {
+  min-width: 120px;
+  height: 40px;
+  padding-left: 10px;
+  padding-right: 10px;
+
+  font-size: 18px;
+  text-transform: uppercase;
+
+  cursor: pointer;
+}
+
+.controls-container button:not(:last-child) {
+  margin-right: 20px;
+}
+
+.timer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.field {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.field:not(:last-child) {
+  margin-right: 40px;
+}
+
+.field:not(:last-child)::after {
+  content: ':';
+  position: absolute;
+  top: 0;
+  right: -28px;
+
+  font-size: 72px;
+  line-height: 1;
+}
+
+.value {
+  font-size: 72px;
+  line-height: 1.15;
+}
+
+.label {
+  font-size: 14px;
+  text-transform: uppercase;
+  text-align: center;
+}
