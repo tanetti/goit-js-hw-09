@@ -14,6 +14,17 @@ Notify.init({
   },
 });
 
+const collectFormData = () => {
+  const formDataObject = {};
+  const formData = new FormData(formRef);
+
+  formData.forEach((value, key) => {
+    formDataObject[key] = Number(value);
+  });
+
+  return formDataObject;
+};
+
 const createPromise = (position, delay) =>
   new Promise((resolve, reject) => {
     const shouldResolve = Math.random() > 0.3;
@@ -27,7 +38,8 @@ const createPromise = (position, delay) =>
     }, delay);
   });
 
-const createPromisesQueue = ({ delay, step, amount }) => {
+const createPromisesQueue = () => {
+  const { delay, step, amount } = collectFormData();
   let iterationDelay = delay;
 
   for (let i = 1; i <= amount; i += 1) {
@@ -46,19 +58,14 @@ const createPromisesQueue = ({ delay, step, amount }) => {
   }
 };
 
-const collectFormData = ({ delay, step, amount }) => ({
-  delay: Number(delay.value),
-  step: Number(step.value),
-  amount: Number(amount.value),
-});
-
 const toggleSubmitButtonState = () => {
   submitButtonRef.toggleAttribute('disabled');
 };
 
 const onFormSubmit = event => {
   event.preventDefault();
-  createPromisesQueue(collectFormData(event.currentTarget.elements));
+
+  createPromisesQueue();
   toggleSubmitButtonState();
 };
 
