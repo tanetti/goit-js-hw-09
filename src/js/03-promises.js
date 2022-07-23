@@ -1,7 +1,6 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const formRef = document.querySelector('form.form');
-const submitButtonRef = formRef.querySelector('button');
 
 Notify.init({
   distance: '20px',
@@ -14,9 +13,9 @@ Notify.init({
   },
 });
 
-const collectFormData = () => {
+const collectFormData = form => {
   const formDataObject = {};
-  const formData = new FormData(formRef);
+  const formData = new FormData(form);
 
   formData.forEach((value, key) => {
     formDataObject[key] = Number(value);
@@ -38,8 +37,8 @@ const createPromise = (position, delay) =>
     }, delay);
   });
 
-const createPromisesQueue = () => {
-  const { delay, step, amount } = collectFormData();
+const createPromisesQueue = form => {
+  const { delay, step, amount } = collectFormData(form);
   let iterationDelay = delay;
 
   for (let i = 1; i <= amount; i += 1) {
@@ -51,22 +50,24 @@ const createPromisesQueue = () => {
         Notify.failure(`Rejected promise ${position} in ${delay}ms`);
       })
       .finally(() => {
-        if (i === amount) toggleSubmitButtonState();
+        if (i === amount) toggleSubmitButtonState(form);
       });
 
     iterationDelay += step;
   }
 };
 
-const toggleSubmitButtonState = () => {
+const toggleSubmitButtonState = form => {
+  const submitButtonRef = form.querySelector('button');
   submitButtonRef.toggleAttribute('disabled');
 };
 
 const onFormSubmit = event => {
   event.preventDefault();
+  const form = event.currentTarget;
 
-  createPromisesQueue();
-  toggleSubmitButtonState();
+  createPromisesQueue(form);
+  toggleSubmitButtonState(form);
 };
 
 formRef.addEventListener('submit', onFormSubmit);
