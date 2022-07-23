@@ -1,26 +1,66 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
-const refs = {};
+const formRef = document.querySelector('form.form');
+const submitButtonRef = formRef.querySelector('button');
 
 Notify.init({
-  position: 'right-bottom',
   distance: '20px',
   clickToClose: true,
   cssAnimationStyle: 'from-right',
   fontSize: '14px',
+  delay: 4000,
   failure: {
     background: '#ff4432',
-  },
-  warning: {
-    textColor: '#000',
   },
 });
 
 const createPromise = (position, delay) => {
-  const shouldResolve = Math.random() > 0.3;
-  if (shouldResolve) {
-    // Fulfill
-  } else {
-    // Reject
+  return new Promise((resolve, reject) => {
+    const shouldResolve = Math.random() > 0.3;
+
+    setTimeout(() => {
+      if (shouldResolve) {
+        resolve({ position, delay });
+      } else {
+        reject({ position, delay });
+      }
+    }, delay);
+  });
+};
+
+const createPromisesQueue = ({ delay, step, amount }) => {
+  let iterationDelay = delay;
+
+  for (let i = 1; i <= amount; i += 1) {
+    createPromise(i, iterationDelay)
+      .then(({ position, delay }) => {
+        Notify.success(`Fulfilled promise ${position} in ${delay}ms`);
+      })
+      .catch(({ position, delay }) => {
+        Notify.failure(`Rejected promise ${position} in ${delay}ms`);
+      })
+      .finally(() => {
+        if (i === amount) toggleSubmitButtonState();
+      });
+
+    iterationDelay += step;
   }
 };
+
+const collectFormData = form => ({
+  delay: Number(form.delay.value),
+  step: Number(form.step.value),
+  amount: Number(form.amount.value),
+});
+
+const toggleSubmitButtonState = () => {
+  submitButtonRef.toggleAttribute('disabled');
+};
+
+const onFormSubmit = event => {
+  event.preventDefault();
+  createPromisesQueue(collectFormData(event.currentTarget));
+  toggleSubmitButtonState();
+};
+
+formRef.addEventListener('submit', onFormSubmit);
