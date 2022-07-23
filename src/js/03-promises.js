@@ -14,11 +14,13 @@ Notify.init({
 });
 
 class PromiseGenerator {
-  constructor() {
+  constructor(settings) {
     this.form = null;
     this.delay = null;
     this.step = null;
     this.amount = null;
+    this.onSuccess = settings?.onSuccess;
+    this.onFailure = settings?.onFailure;
   }
 
   start(form) {
@@ -65,10 +67,10 @@ class PromiseGenerator {
     for (let i = 1; i <= this.amount; i += 1) {
       this.createPromise(i, iterationDelay)
         .then(({ position, delay }) => {
-          Notify.success(`Fulfilled promise ${position} in ${delay}ms`);
+          this.successNotification(`Fulfilled promise ${position} in ${delay}ms`);
         })
         .catch(({ position, delay }) => {
-          Notify.failure(`Rejected promise ${position} in ${delay}ms`);
+          this.failureNotification(`Rejected promise ${position} in ${delay}ms`);
         })
         .finally(() => {
           if (i === this.amount) this.toggleSubmitButtonState();
@@ -91,9 +93,28 @@ class PromiseGenerator {
       }, delay);
     });
   }
+
+  successNotification(message) {
+    if (this.onSuccess) {
+      this.onSuccess(message);
+    } else {
+      alert(message);
+    }
+  }
+
+  failureNotification(message) {
+    if (this.onFailure) {
+      this.onFailure(message);
+    } else {
+      alert(message);
+    }
+  }
 }
 
-const promiseGenerator = new PromiseGenerator();
+const promiseGenerator = new PromiseGenerator({
+  onSuccess: Notify.success,
+  onFailure: Notify.failure,
+});
 
 const onFormSubmit = event => {
   event.preventDefault();
