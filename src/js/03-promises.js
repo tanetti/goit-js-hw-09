@@ -14,73 +14,77 @@ Notify.init({
 });
 
 class PromiseGenerator {
+  #form;
+  #onSuccess;
+  #onFailure;
+
   constructor(settings) {
-    this.form = null;
+    this.#form = null;
     this.delay = null;
     this.step = null;
     this.amount = null;
-    this.onSuccess = settings?.onSuccess;
-    this.onFailure = settings?.onFailure;
+    this.#onSuccess = settings?.onSuccess;
+    this.#onFailure = settings?.onFailure;
   }
 
   start(form) {
-    this.form = form;
-    if (!this.form) {
-      Notify.failure('Target Form not found!');
+    this.#form = form;
+    if (!this.#form) {
+      this.#failureNotification('Target Form not found!');
       return;
     }
 
-    this.collectFormData();
+    this.#collectFormData();
     if (!this.delay) {
-      Notify.failure('Delay value not found!');
+      this.#failureNotification('Delay value not found!');
       return;
     }
     if (!this.step) {
-      Notify.failure('Step value not found!');
+      this.#failureNotification('Step value not found!');
       return;
     }
     if (!this.amount) {
-      Notify.failure('Amount value not found!');
+      this.#failureNotification('Amount value not found!');
       return;
     }
 
-    this.toggleSubmitButtonState();
-    this.createPromisesQueue();
+    this.#toggleSubmitButtonState();
+    this.#createPromisesQueue();
   }
 
-  collectFormData() {
-    const formData = new FormData(this.form);
+  #collectFormData() {
+    const formData = new FormData(this.#form);
 
     formData.forEach((value, key) => {
       this[key] = Number(value);
     });
   }
 
-  toggleSubmitButtonState() {
-    const submitButtonRef = this.form.querySelector('[type="submit"]');
+  #toggleSubmitButtonState() {
+    const submitButtonRef = this.#form.querySelector('[type="submit"]');
     submitButtonRef.toggleAttribute('disabled');
   }
 
-  createPromisesQueue() {
+  #createPromisesQueue() {
     let iterationDelay = this.delay;
 
     for (let i = 1; i <= this.amount; i += 1) {
-      this.createPromise(i, iterationDelay)
+      this.#createPromise(i, iterationDelay)
         .then(({ position, delay }) => {
-          this.successNotification(`Fulfilled promise ${position} in ${delay}ms`);
+          this.#successNotification(`Fulfilled promise ${position} in ${delay}ms`);
         })
         .catch(({ position, delay }) => {
-          this.failureNotification(`Rejected promise ${position} in ${delay}ms`);
+          this.#failureNotification(`Rejected promise ${position} in ${delay}ms`);
         })
         .finally(() => {
-          if (i === this.amount) this.toggleSubmitButtonState();
+          if (i === this.amount) this.#toggleSubmitButtonState();
         });
 
       iterationDelay += this.step;
     }
   }
 
-  createPromise(position, delay) {
+  #createPromise(position, delay) {
     return new Promise((resolve, reject) => {
       const shouldResolve = Math.random() > 0.3;
 
@@ -94,19 +98,19 @@ class PromiseGenerator {
     });
   }
 
-  successNotification(message) {
-    if (this.onSuccess) {
-      this.onSuccess(message);
+  #successNotification(message) {
+    if (this.#onSuccess) {
+      this.#onSuccess(message);
     } else {
-      alert(message);
+      alert(`SUCCESS!\n${message}`);
     }
   }
 
-  failureNotification(message) {
-    if (this.onFailure) {
-      this.onFailure(message);
+  #failureNotification(message) {
+    if (this.#onFailure) {
+      this.#onFailure(message);
     } else {
-      alert(message);
+      alert(`FAILURE!\n${message}`);
     }
   }
 }
