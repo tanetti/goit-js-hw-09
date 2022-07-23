@@ -36,10 +36,12 @@ const dateTimePickerOptions = {
   minuteIncrement: 1,
   onClose([selectedDate]) {
     if (!selectedDate) {
+      refs.stratCountdownButton.setAttribute('disabled', true);
       Notify.warning('Please choose a Date!');
       return;
     }
     if (selectedDate < Date.now()) {
+      refs.stratCountdownButton.setAttribute('disabled', true);
       Notify.failure('Please choose Date in the future!');
       return;
     }
